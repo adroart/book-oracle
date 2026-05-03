@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Search — Book Oracle{% endblock %}
+{% block content %}
+<div class="search-page">
+    <h1>Search Books</h1>
+    <form method="get" action="/search" class="search-form">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search books..." class="search-input" autofocus>
+        <button type="submit" class="search-btn">Search</button>
+    </form>
+    {% if results is not none %}
+    <div class="search-results">
+        <p class="result-count">{{ results|length }} result{% if results|length != 1 %}s{% endif %} for "{{ query }}"</p>
+        {% for book in results %}
+        <div class="result-card">
+            <h3><a href="/books/{{ book.id }}">{{ book.title or book.filename }}</a></h3>
+            <p class="result-meta">{{ book.author }} · {{ book.format }}</p>
+            <p class="result-snippet">{{ book._formatted.text[:300] if book._formatted else '' }}...</p>
+        </div>
+        {% else %}
+        <p class="empty">No results found.</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

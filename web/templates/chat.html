@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Chat — Book Oracle{% endblock %}
+{% block content %}
+<div class="chat-page">
+    <h1>Ask the Oracle</h1>
+    <p class="chat-subtitle">Ask questions about your book collection. RAG-powered answers with citations.</p>
+    <div class="chat-container" id="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <div class="message system">
+                Ask me anything about your books. I'll search, synthesize, and cite sources.
+            </div>
+        </div>
+        <form class="chat-input-form" id="chat-form" method="post">
+            <input type="text" name="q" id="chat-input" placeholder="Ask a question..." class="chat-input" autofocus>
+            <button type="submit" class="chat-send">Ask</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById('chat-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('chat-input');
+    const q = input.value.trim();
+    if (!q) return;
+
+    const messages = document.getElementById('chat-messages');
+    messages.innerHTML += `<div class="message user"><strong>You:</strong> ${q}</div>`;
+    input.value = '';
+    messages.innerHTML += `<div class="message thinking">Thinking...</div>`;
+    messages.scrollTop = messages.scrollHeight;
+
+    try {
+        const resp = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({query: q})
+        });
+        const data = await resp.json();
+        messages.querySelector('.thinking').remove();
+        const answer = data.answer || data.error || 'No response';
+        const citations = data.citations ? data.citations.map(c => `<li><a href="/books/${c.book_id}">${c.title}</a></li>`).join('') : '';
+        messages.innerHTML += `<div class="message answer"><strong>Oracle:</strong> ${answer}${citations ? '<br><small>Sources:</small><ul>' + citations + '</ul>' : ''}</div>`;
+    } catch(err) {
+        messages.querySelector('.thinking').remove();
+        messages.innerHTML += `<div class="message error">Error: ${err.message}</div>`;
+    }
+    messages.scrollTop = messages.scrollHeight;
+});
+</script>
+{% endblock %}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Book Oracle{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="topbar">
+        <div class="nav-inner">
+            <a href="/" class="logo">📚 Book Oracle</a>
+            <div class="nav-links">
+                <a href="/">Dashboard</a>
+                <a href="/search">Search</a>
+                <a href="/books">Browse</a>
+                <a href="/pipeline">Pipeline</a>
+                <a href="/chat">Chat</a>
+            </div>
+        </div>
+    </nav>
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

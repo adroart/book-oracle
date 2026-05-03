@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Pipeline — Book Oracle{% endblock %}
+{% block content %}
+<div class="pipeline-page">
+    <h1>Pipeline Status</h1>
+    <div class="pipeline-stages">
+        <div class="stage">
+            <div class="stage-header"><span class="stage-num">1</span> Text Extraction</div>
+            <div class="stage-bar"><div class="stage-fill" style="width:{{ (stats.extracted / max(stats.total,1) * 100)|int }}%"></div></div>
+            <div class="stage-info">{{ stats.extracted }} / {{ stats.total }} books extracted</div>
+        </div>
+        <div class="stage">
+            <div class="stage-header"><span class="stage-num">2</span> Meilisearch Index</div>
+            <div class="stage-bar"><div class="stage-fill" style="width:{{ (stats.indexed / max(stats.total,1) * 100)|int }}%"></div></div>
+            <div class="stage-info">{{ stats.indexed }} / {{ stats.total }} books indexed</div>
+        </div>
+        <div class="stage">
+            <div class="stage-header"><span class="stage-num">3</span> Entity Recognition</div>
+            <div class="stage-bar"><div class="stage-fill" style="width:{{ (stats.ner_done / max(stats.total,1) * 100)|int }}%"></div></div>
+            <div class="stage-info">{{ stats.ner_done }} / {{ stats.total }} books processed</div>
+        </div>
+        <div class="stage">
+            <div class="stage-header"><span class="stage-num">4</span> Embeddings</div>
+            <div class="stage-bar"><div class="stage-fill" style="width:{{ (stats.embedded / max(stats.total,1) * 100)|int }}%"></div></div>
+            <div class="stage-info">{{ stats.embedded }} / {{ stats.total }} books embedded</div>
+        </div>
+    </div>
+    {% if stats.errors > 0 %}
+    <div class="error-section">
+        <h3>Errors ({{ stats.errors }})</h3>
+        <div class="error-list">
+            {% for book in books if book.text_extracted == -1 %}
+            <div class="error-item">
+                <strong>{{ book.filename }}</strong>: {{ book.error_log[:200] }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

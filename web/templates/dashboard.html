@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Book Oracle{% endblock %}
+{% block content %}
+<div class="dashboard">
+    <h1>Book Oracle Dashboard</h1>
+    <div class="stats-grid">
+        <div class="stat-card"><span class="stat-num">{{ stats.total }}</span><span class="stat-label">Total Books</span></div>
+        <div class="stat-card"><span class="stat-num">{{ stats.extracted }}</span><span class="stat-label">Extracted</span></div>
+        <div class="stat-card"><span class="stat-num">{{ stats.indexed }}</span><span class="stat-label">Indexed</span></div>
+        <div class="stat-card"><span class="stat-num">{{ stats.ner_done }}</span><span class="stat-label">Entities</span></div>
+        <div class="stat-card"><span class="stat-num">{{ stats.embedded }}</span><span class="stat-label">Embedded</span></div>
+        <div class="stat-card {% if stats.errors > 0 %}stat-error{% endif %}"><span class="stat-num">{{ stats.errors }}</span><span class="stat-label">Errors</span></div>
+    </div>
+    <h2>Recent Books</h2>
+    <div class="book-list">
+        {% for book in books %}
+        <div class="book-row {% if book.text_extracted == -1 %}errored{% endif %}">
+            <span class="book-title">{{ book.title or book.filename }}</span>
+            <span class="book-meta">{{ book.author }} · {{ book.format }} · {{ '%0.1f KB'|format(book.text_chars/1024) if book.text_chars > 0 else 'unprocessed' }}</span>
+            <span class="book-status">
+                {% if book.text_extracted == 1 %}✅ Extracted{% elif book.text_extracted == -1 %}❌ Error{% else %}⏳ Pending{% endif %}
+            </span>
+        </div>
+        {% else %}
+        <p class="empty">No books registered yet. Run the pipeline to get started.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

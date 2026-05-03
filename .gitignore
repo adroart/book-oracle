@@ -1,0 +1,9 @@
+# Don't store extracted text or models in git
+data/
+*.txt
+*.gguf
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
