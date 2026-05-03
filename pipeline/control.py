@@ -5,7 +5,7 @@ import os
 import time
 from pathlib import Path
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "library.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "books.db")
 
 
 def init_db(db_path=None):
