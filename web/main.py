@@ -32,6 +32,13 @@ def get_rag():
                 _rag_engine = BookOracle()
     return _rag_engine
 
+@app.on_event("startup")
+async def warm_model():
+    """Preload the RAG model on startup so first user request is instant."""
+    from rag.oracle import BookOracle
+    import threading as _t
+    _t.Thread(target=lambda: (get_rag(), print("[startup] RAG model loaded")), daemon=True).start()
+
 # ── HTML ─────────────────────────────────────────────────────────────
 STYLES = """<style>
 *{margin:0;padding:0;box-sizing:border-box}
